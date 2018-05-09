@@ -1,7 +1,7 @@
 package com.levelup.model;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.util.Date;
 
 @Entity
 public class Task {
@@ -32,6 +32,15 @@ public class Task {
 
     @ManyToOne
     private User owner;
+
+    public Task() {
+    }
+
+    public Task(String name, String description, Date dateOfCreating) {
+        this.name = name;
+        this.description = description;
+        this.dateOfCreating = dateOfCreating;
+    }
 
     public int getId() {
         return id;

@@ -7,7 +7,7 @@
         <setting name="provider-name" value="" />
         <datasource-mapping>
           <factory-entry name="Entities" />
-          <factory-entry name="TestPersistenceUnit" />
+          <factory-entry name="TestPersistenceUnit" value="28f33342-eadd-4509-ae75-769e9dd61c88" />
         </datasource-mapping>
         <deploymentDescriptor name="persistence.xml" url="file://$MODULE_DIR$/src/main/resources/META-INF/persistence.xml" />
       </configuration>

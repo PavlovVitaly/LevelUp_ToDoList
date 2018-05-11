@@ -28,7 +28,7 @@ public class Task {
     @Column
     private Date endDateOfExecution;
 
-    @OneToOne
+    @ManyToOne
     private TaskStatus status;
 
     @ManyToOne
@@ -41,6 +41,10 @@ public class Task {
         this.name = name;
         this.description = description;
         this.dateOfCreating = dateOfCreating;
+    }
+
+    public Task(String name, String description) {
+        this(name, description, new Date());
     }
 
     public int getId() {

@@ -36,12 +36,10 @@ public class DbTest {
         em.getTransaction().begin();
         try{
             em.persist(user);
+            em.getTransaction().commit();
         }catch (Throwable t){
             em.getTransaction().rollback();
             throw t;
-        }
-        finally {
-            em.getTransaction().commit();
         }
 
         return em.find(User.class, user.getId());
@@ -52,12 +50,10 @@ public class DbTest {
         em.getTransaction().begin();
         try{
             em.persist(task);
+            em.getTransaction().commit();
         }catch (Throwable t){
             em.getTransaction().rollback();
             throw t;
-        }
-        finally {
-            em.getTransaction().commit();
         }
 
         return em.find(Task.class, task.getId());
@@ -68,12 +64,10 @@ public class DbTest {
         em.getTransaction().begin();
         try{
             em.persist(taskStatus);
+            em.getTransaction().commit();
         }catch (Throwable t){
             em.getTransaction().rollback();
             throw t;
-        }
-        finally {
-            em.getTransaction().commit();
         }
 
         return em.find(TaskStatus.class, taskStatus.getId());
@@ -83,14 +77,12 @@ public class DbTest {
         em.getTransaction().begin();
         try{
             em.persist(user);
-            em.persist(task);
             em.persist(taskStatus);
+            em.persist(task);
+            em.getTransaction().commit();
         }catch (Throwable t){
             em.getTransaction().rollback();
             throw t;
-        }
-        finally {
-            em.getTransaction().commit();
         }
     }
 
@@ -188,7 +180,6 @@ public class DbTest {
         User foundUser = em.find(User.class, user.getId());
         Task foundTask = em.find(Task.class, task.getId());
 
-//        assertEquals(foundTask, foundUser.getTasks().get(0));
         assertEquals(foundUser, foundTask.getOwner());
     }
 
@@ -207,7 +198,6 @@ public class DbTest {
         Task foundTask = em.find(Task.class, task.getId());
         TaskStatus foundTaskStatus = em.find(TaskStatus.class, taskStatus.getId());
 
-//        assertEquals(foundTask, foundTaskStatus.getTasks().get(0));
         assertEquals(foundTaskStatus, foundTask.getStatus());
     }
 

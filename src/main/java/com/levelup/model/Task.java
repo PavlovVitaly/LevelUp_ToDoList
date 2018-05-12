@@ -28,8 +28,8 @@ public class Task {
     @Column
     private Date endDateOfExecution;
 
-    @ManyToOne
-    private TaskStatus status;
+    @Column
+    private TaskStatus status = TaskStatus.NEW;
 
     @ManyToOne
     private User owner;

@@ -1,5 +1,7 @@
 package com.levelup.model;
 
+import com.levelup.dao.TaskDao;
+import com.levelup.dao.UsersDao;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +21,8 @@ import static junit.framework.TestCase.assertNotNull;
 public class DbTest {
     private EntityManagerFactory emf;
     private EntityManager em;
+    private UsersDao usersDao;
+    private TaskDao taskDao;
 
     private String expectedLogin = "login";
     private String expectedPassword = "password";
@@ -29,13 +33,11 @@ public class DbTest {
     private String expectedName = "name";
     private String expectedDescription = "description";
 
-    private String expectedStatus = "status";
-
     private User insertDefaultUser(String login, String password, String firstName, String secondName, String email) throws Throwable{
-        User user = new User(login, password, firstName, secondName, email);
+        User user;
         em.getTransaction().begin();
         try{
-            em.persist(user);
+            user = usersDao.createUser(login, password, firstName, secondName, email);
             em.getTransaction().commit();
         }catch (Throwable t){
             em.getTransaction().rollback();
@@ -46,38 +48,22 @@ public class DbTest {
     }
 
     private Task insertDefaultTask(String name, String description) throws Throwable{
-        Task task = new Task(name, description, new Date());
+        Task task;
         em.getTransaction().begin();
         try{
-            em.persist(task);
+            task = taskDao.createTask(name, description);
             em.getTransaction().commit();
         }catch (Throwable t){
             em.getTransaction().rollback();
             throw t;
         }
-
         return em.find(Task.class, task.getId());
     }
 
-    private TaskStatus insertDefaultTaskStatus(String status) throws Throwable{
-        TaskStatus taskStatus = new TaskStatus(status);
-        em.getTransaction().begin();
-        try{
-            em.persist(taskStatus);
-            em.getTransaction().commit();
-        }catch (Throwable t){
-            em.getTransaction().rollback();
-            throw t;
-        }
-
-        return em.find(TaskStatus.class, taskStatus.getId());
-    }
-
-    private void insertInAllTables(User user, Task task, TaskStatus taskStatus) throws Throwable{
+    private void insertInAllTables(User user, Task task) throws Throwable{
         em.getTransaction().begin();
         try{
             em.persist(user);
-            em.persist(taskStatus);
             em.persist(task);
             em.getTransaction().commit();
         }catch (Throwable t){
@@ -90,6 +76,8 @@ public class DbTest {
     public void setup(){
         emf = Persistence.createEntityManagerFactory("TestPersistenceUnit");
         em = emf.createEntityManager();
+        usersDao = new UsersDao(em);
+        taskDao = new TaskDao(em);
     }
 
     @After
@@ -107,12 +95,6 @@ public class DbTest {
     @Test
     public void createTaskTest() throws Throwable{
         Task found = insertDefaultTask(expectedName, expectedDescription);
-        assertNotNull(found);
-    }
-
-    @Test
-    public void createTaskStatusTest() throws Throwable{
-        TaskStatus found = insertDefaultTaskStatus(expectedStatus);
         assertNotNull(found);
     }
 
@@ -138,31 +120,22 @@ public class DbTest {
     }
 
     @Test
-    public void insertDefaultTaskStatusTest() throws Throwable{
-        TaskStatus found = insertDefaultTaskStatus(expectedStatus);
-        assertNotNull(found);
-        assertEquals(expectedStatus, found.getStatus());
-    }
-
-    @Test
     public void createAllTables() throws Throwable{
 
         User user = new User(expectedLogin, expectedPassword, expectedFirstName, expectedSecondName, expectedEmail);
-        Task task = new Task(expectedName, expectedDescription, new Date());
-        TaskStatus taskStatus = new TaskStatus(expectedStatus);
+        Task task = new Task(expectedName, expectedDescription);
+        TaskStatus taskStatus = TaskStatus.ACTIVE;
 
         task.setOwner(user);
         task.setStatus(taskStatus);
 
-        insertInAllTables(user, task, taskStatus);
+        insertInAllTables(user, task);
 
         User foundUser = em.find(User.class, user.getId());
         Task foundTask = em.find(Task.class, task.getId());
-        TaskStatus foundTaskStatus = em.find(TaskStatus.class, taskStatus.getId());
 
         assertNotNull(foundUser);
         assertNotNull(foundTask);
-        assertNotNull(foundTaskStatus);
     }
 
     @Test
@@ -170,12 +143,12 @@ public class DbTest {
 
         User user = new User(expectedLogin, expectedPassword, expectedFirstName, expectedSecondName, expectedEmail);
         Task task = new Task(expectedName, expectedDescription, new Date());
-        TaskStatus taskStatus = new TaskStatus(expectedStatus);
+        TaskStatus taskStatus = TaskStatus.ACTIVE;
 
         task.setOwner(user);
         task.setStatus(taskStatus);
 
-        insertInAllTables(user, task, taskStatus);
+        insertInAllTables(user, task);
 
         User foundUser = em.find(User.class, user.getId());
         Task foundTask = em.find(Task.class, task.getId());
@@ -184,34 +157,16 @@ public class DbTest {
     }
 
     @Test
-    public void linkBetweenTaskAndTaskStatus() throws Throwable{
-
-        User user = new User(expectedLogin, expectedPassword, expectedFirstName, expectedSecondName, expectedEmail);
-        Task task = new Task(expectedName, expectedDescription, new Date());
-        TaskStatus taskStatus = new TaskStatus(expectedStatus);
-
-        task.setOwner(user);
-        task.setStatus(taskStatus);
-
-        insertInAllTables(user, task, taskStatus);
-
-        Task foundTask = em.find(Task.class, task.getId());
-        TaskStatus foundTaskStatus = em.find(TaskStatus.class, taskStatus.getId());
-
-        assertEquals(foundTaskStatus, foundTask.getStatus());
-    }
-
-    @Test
     public void linkBetweenTaskAndUser() throws Throwable{
 
         User user = new User(expectedLogin, expectedPassword, expectedFirstName, expectedSecondName, expectedEmail);
         Task task = new Task(expectedName, expectedDescription, new Date());
-        TaskStatus taskStatus = new TaskStatus(expectedStatus);
+        TaskStatus taskStatus = TaskStatus.ACTIVE;
 
         task.setOwner(user);
         task.setStatus(taskStatus);
 
-        insertInAllTables(user, task, taskStatus);
+        insertInAllTables(user, task);
 
         User foundUser = em.find(User.class, user.getId());
         Task foundTask = em.find(Task.class, task.getId());
@@ -219,21 +174,4 @@ public class DbTest {
         assertEquals(foundTask, foundUser.getTasks().get(0));
     }
 
-    @Test
-    public void linkBetweenTaskStatusAndTask() throws Throwable{
-
-        User user = new User(expectedLogin, expectedPassword, expectedFirstName, expectedSecondName, expectedEmail);
-        Task task = new Task(expectedName, expectedDescription, new Date());
-        TaskStatus taskStatus = new TaskStatus(expectedStatus);
-
-        task.setOwner(user);
-        task.setStatus(taskStatus);
-
-        insertInAllTables(user, task, taskStatus);
-
-        Task foundTask = em.find(Task.class, task.getId());
-        TaskStatus foundTaskStatus = em.find(TaskStatus.class, taskStatus.getId());
-
-        assertEquals(foundTask, foundTaskStatus.getTasks().get(0));
-    }
 }

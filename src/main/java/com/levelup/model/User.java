@@ -28,10 +28,13 @@ public class User {
     @ManyToOne
     private User manager;
 
-    @OneToMany
+    @Column(nullable = false)
+    private Role role = Role.EMPLOYEE;
+
+    @OneToMany(cascade = CascadeType.PERSIST)
     private List<User> subordinates;
 
-    @OneToMany
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Task> tasks;
 
     public User() {
@@ -99,6 +102,14 @@ public class User {
 
     public void setManager(User manager) {
         this.manager = manager;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public List<User> getSubordinates() {

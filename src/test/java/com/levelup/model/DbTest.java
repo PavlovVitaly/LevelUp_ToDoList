@@ -168,7 +168,10 @@ public class DbTest {
 
         insertInAllTables(user, task);
 
-        User foundUser = em.find(User.class, user.getId());
+//        User foundUser = em.find(User.class, user.getId());
+        User foundUser = (User)em.createQuery("from User us JOIN FETCH us.tasks tsk where us.id = :id")
+                .setParameter("id", user.getId())
+                .getSingleResult();
         Task foundTask = em.find(Task.class, task.getId());
 
         assertEquals(foundTask, foundUser.getTasks().get(0));

@@ -3,6 +3,7 @@ package com.levelup.model;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "users")
@@ -128,5 +129,25 @@ public class User {
 
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id &&
+                Objects.equals(login, user.login) &&
+                Objects.equals(password, user.password) &&
+                Objects.equals(firstName, user.firstName) &&
+                Objects.equals(secondName, user.secondName) &&
+                Objects.equals(email, user.email) &&
+                role == user.role;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, login, password, firstName, secondName, email, role);
     }
 }

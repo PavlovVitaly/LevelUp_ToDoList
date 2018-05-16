@@ -2,6 +2,7 @@ package com.levelup.model;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Table(name = "tasks")
@@ -118,5 +119,26 @@ public class Task {
 
     public void setOwner(User owner) {
         this.owner = owner;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return id == task.id &&
+                Objects.equals(name, task.name) &&
+                Objects.equals(description, task.description) &&
+                Objects.equals(dateOfCreating, task.dateOfCreating) &&
+                Objects.equals(deadlineDate, task.deadlineDate) &&
+                Objects.equals(startDateOfExecution, task.startDateOfExecution) &&
+                Objects.equals(endDateOfExecution, task.endDateOfExecution) &&
+                status == task.status;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, name, description, dateOfCreating, deadlineDate, startDateOfExecution, endDateOfExecution, status);
     }
 }

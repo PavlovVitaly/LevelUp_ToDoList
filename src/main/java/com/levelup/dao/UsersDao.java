@@ -22,10 +22,8 @@ public class UsersDao {
         return user;
     }
 
-//    @SuppressWarnings("unchecked")
-//    public List<Part> findByPartId(String partId) {
-//        return em.createNamedQuery(Part.SEARCH_BY_PART_ID)
-//                .setParameter("partId", partId)
-//                .getResultList();
-//    }
+    @SuppressWarnings("unchecked")
+    public List<User> findAllUsers() {
+        return em.createQuery("from User").getResultList();
+    }
 }

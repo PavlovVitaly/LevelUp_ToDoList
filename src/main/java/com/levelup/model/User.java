@@ -1,6 +1,7 @@
 package com.levelup.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,17 +26,18 @@ public class User {
     @Column(nullable = false)
     private String email;
 
+//    @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
     @ManyToOne
     private User manager;
 
     @Column(nullable = false)
     private Role role = Role.EMPLOYEE;
 
-    @OneToMany(cascade = CascadeType.PERSIST)
-    private List<User> subordinates;
+    @OneToMany(mappedBy = "manager", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<User> subordinates = new ArrayList<>();
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<Task> tasks;
+    @OneToMany(mappedBy = "owner", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<Task> tasks = new ArrayList<>();
 
     public User() {
     }

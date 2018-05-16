@@ -31,7 +31,8 @@ public class Task {
     @Column
     private TaskStatus status = TaskStatus.NEW;
 
-    @ManyToOne
+//    @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private User owner;
 
     public Task() {

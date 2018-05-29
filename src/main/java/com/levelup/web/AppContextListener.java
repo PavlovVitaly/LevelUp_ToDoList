@@ -16,7 +16,7 @@ public class AppContextListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        emf = Persistence.createEntityManagerFactory("ProductionPersistenceUnit");
+        emf = Persistence.createEntityManagerFactory("ProductionPersistenceUnitMySql");
         em = emf.createEntityManager();
 
         createTestUsers();

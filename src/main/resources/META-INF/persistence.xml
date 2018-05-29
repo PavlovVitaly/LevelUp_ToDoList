@@ -35,4 +35,22 @@
             <property name="hibernate.hbm2ddl.auto" value="create"/>
         </properties>
     </persistence-unit>
+
+    <persistence-unit name="ProductionPersistenceUnitMySql" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <properties>
+            <property name="hibernate.archive.autodetection" value="class" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect" />
+            <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
+            <property name="hibernate.connection.url" value="jdbc:mysql://rds-mysql-10mintutorial.cq105jkyzods.us-west-2.rds.amazonaws.com:3306/mySqlDb" />
+            <property name="hibernate.connection.user" value="admin" />
+            <property name="hibernate.connection.password" value="mypassword" />
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.hbm2ddl.auto" value="create"/>
+        </properties>
+
+    </persistence-unit>
+
 </persistence>

@@ -5,6 +5,7 @@ import com.levelup.dao.UsersDao;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.jws.soap.SOAPBinding;
 import javax.persistence.EntityManager;
@@ -19,8 +20,7 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 
 public class DbTest {
-    private EntityManagerFactory emf;
-    private EntityManager em;
+
     private UsersDao usersDao;
     private TaskDao taskDao;
 
@@ -34,57 +34,30 @@ public class DbTest {
     private String expectedDescription = "description";
 
     private User insertDefaultUser(String login, String password, String firstName, String secondName, String email) throws Throwable{
-        User user;
-        em.getTransaction().begin();
-        try{
-            user = usersDao.createUser(login, password, firstName, secondName, email);
-            em.getTransaction().commit();
-        }catch (Throwable t){
-            em.getTransaction().rollback();
-            throw t;
-        }
-
-        return em.find(User.class, user.getId());
+        User user = usersDao.createUser(login, password, firstName, secondName, email);
+        return usersDao.findByPrimaryKey(user.getId());
     }
 
     private Task insertDefaultTask(String name, String description) throws Throwable{
-        Task task;
-        em.getTransaction().begin();
-        try{
-            task = taskDao.createTask(name, description);
-            em.getTransaction().commit();
-        }catch (Throwable t){
-            em.getTransaction().rollback();
-            throw t;
-        }
-        return em.find(Task.class, task.getId());
+        Task task = taskDao.createTask(name, description);
+        return taskDao.findByPrimaryKey(task.getId());
     }
 
     private void insertInAllTables(User user, Task task) throws Throwable{
-        em.getTransaction().begin();
-        try{
-            em.persist(user);
-            em.persist(task);
-            em.getTransaction().commit();
-        }catch (Throwable t){
-            em.getTransaction().rollback();
-            throw t;
-        }
+        usersDao.saveUser(user);
+        taskDao.saveTask(task);
     }
 
     @Before
     public void setup(){
-        emf = Persistence.createEntityManagerFactory("TestPersistenceUnit");
-        em = emf.createEntityManager();
-        usersDao = new UsersDao(em);
-        taskDao = new TaskDao(em);
+        usersDao = new UsersDao();
+        taskDao = new TaskDao();
     }
 
-    @After
-    public void end(){
-        em.close();
-        emf.close();
-    }
+//    @After
+//    public void end(){
+//
+//    }
 
     @Test
     public void createUserTest() throws Throwable{
@@ -131,8 +104,8 @@ public class DbTest {
 
         insertInAllTables(user, task);
 
-        User foundUser = em.find(User.class, user.getId());
-        Task foundTask = em.find(Task.class, task.getId());
+        User foundUser = usersDao.findByPrimaryKey(user.getId());
+        Task foundTask = taskDao.findByPrimaryKey(task.getId());
 
         assertNotNull(foundUser);
         assertNotNull(foundTask);
@@ -150,31 +123,31 @@ public class DbTest {
 
         insertInAllTables(user, task);
 
-        User foundUser = em.find(User.class, user.getId());
-        Task foundTask = em.find(Task.class, task.getId());
+        User foundUser = usersDao.findByPrimaryKey(user.getId());
+        Task foundTask = taskDao.findByPrimaryKey(task.getId());
 
         assertEquals(foundUser, foundTask.getOwner());
     }
 
-    @Test
-    public void linkBetweenTaskAndUser() throws Throwable{
-
-        User user = new User(expectedLogin, expectedPassword, expectedFirstName, expectedSecondName, expectedEmail);
-        Task task = new Task(expectedName, expectedDescription, new Date());
-        TaskStatus taskStatus = TaskStatus.ACTIVE;
-
-        task.setOwner(user);
-        task.setStatus(taskStatus);
-
-        insertInAllTables(user, task);
-
-//        User foundUser = em.find(User.class, user.getId());
-        User foundUser = (User)em.createQuery("FROM User AS us LEFT JOIN FETCH us.tasks AS tsk WHERE us.id = :id")
-                .setParameter("id", user.getId())
-                .getSingleResult();
-        Task foundTask = em.find(Task.class, task.getId());
-
-        assertEquals(foundTask, foundUser.getTasks().get(0));
-    }
+//    @Test
+//    public void linkBetweenTaskAndUser() throws Throwable{
+//
+//        User user = new User(expectedLogin, expectedPassword, expectedFirstName, expectedSecondName, expectedEmail);
+//        Task task = new Task(expectedName, expectedDescription, new Date());
+//        TaskStatus taskStatus = TaskStatus.ACTIVE;
+//
+//        task.setOwner(user);
+//        task.setStatus(taskStatus);
+//
+//        insertInAllTables(user, task);
+//
+////        User foundUser = em.find(User.class, user.getId());
+//        User foundUser = (User)em.createQuery("FROM User AS us LEFT JOIN FETCH us.tasks AS tsk WHERE us.id = :id")
+//                .setParameter("id", user.getId())
+//                .getSingleResult();
+//        Task foundTask = em.find(Task.class, task.getId());
+//
+//        assertEquals(foundTask, foundUser.getTasks().get(0));
+//    }
 
 }

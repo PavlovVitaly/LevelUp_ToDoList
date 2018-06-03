@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<jsp:useBean id="usersBean" type="com.levelup.web.UsersBean" scope="application"/>
+<jsp:useBean id="usersBean" type="com.levelup.web.Beans.UsersBean" scope="application"/>
 <html>
 <head>
     <title>Title</title>

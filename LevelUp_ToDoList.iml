@@ -6,8 +6,8 @@
         <setting name="validation-enabled" value="true" />
         <setting name="provider-name" value="" />
         <datasource-mapping>
-          <factory-entry name="ProductionPersistenceUnit" />
-          <factory-entry name="ProductionPersistenceUnitMySql" />
+          <factory-entry name="ProductionPersistenceUnit" value="85cf8882-54ec-4418-bb1a-d6e9e17672ee" />
+          <factory-entry name="ProductionPersistenceUnitMySql" value="8db1995d-2e61-4295-a518-5ba666c3d015" />
           <factory-entry name="TestPersistenceUnit" />
         </datasource-mapping>
         <deploymentDescriptor name="persistence.xml" url="file://$MODULE_DIR$/src/main/resources/META-INF/persistence.xml" />

@@ -8,7 +8,7 @@ import java.util.Objects;
 @Table(name = "tasks")
 public class Task {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private int id;
 
     @Column(nullable = false)

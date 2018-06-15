@@ -16,7 +16,7 @@ import javax.persistence.Persistence;
 @ComponentScan("com.levelup")
 @EnableWebMvc
 @EnableTransactionManagement
-@EnableJpaRepositories(value = "com.levelup.dao.db_repo")
+//@EnableJpaRepositories(value = "com.levelup.dao.db_repo")
 public class TestConfiguration {
     @Bean("entityManagerFactory")
     public EntityManagerFactory getEntityManagerFactory() {
